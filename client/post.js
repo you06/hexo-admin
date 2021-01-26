@@ -10,6 +10,7 @@ var _ = require('lodash')
 var moment = require('moment')
 var Router = require('react-router');
 var Confirm = require('./confirm');
+const { remove } = require('lodash');
 
 var confirm = function (message, options) {
   var cleanup, component, props, wrapper;
@@ -126,7 +127,12 @@ var Post = React.createClass({
     if (name !== 'post') return
     var parts = data.raw.split('---');
     var _slice = parts[0] === '' ? 2 : 1;
-    var raw = parts.slice(_slice).join('---').trim();
+    var raw = parts.slice(_slice).join('---');
+    const lines = raw.split('\n');
+    let not_empty = 0;
+    for (;lines[not_empty].trim() === ''; not_empty++) {};
+    const remove_header = lines.slice(not_empty).join('\n');
+    raw = remove_header;
     this.setState({
       title: data.title,
       initialRaw: raw,
